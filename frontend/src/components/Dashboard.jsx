@@ -6,7 +6,8 @@ import CredentialForm from './CredentialForm';
 import CredentialItem from './CredentialItem';
 import ThemeToggle from './ThemeToggle';
 import PasswordHistoryModal from './PasswordHistoryModal';
-import { FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft } from 'react-icons/fi';
+import ChangeMasterPasswordModal from './ChangeMasterPasswordModal';
+import { FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft, FiKey } from 'react-icons/fi';
 
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Más recientes' },
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState('recent');
   const [showTrash, setShowTrash] = useState(false);
   const [historyFor, setHistoryFor] = useState(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const loadCredentials = useCallback(async (trash = showTrash) => {
     setLoading(true);
@@ -64,7 +66,7 @@ export default function Dashboard() {
           };
           try {
             const data = await decryptData(encryptionKey, item.ciphertext, item.iv);
-            return { tags: [], folder: '', url: '', history: [], ...data, ...meta };
+            return { tags: [], folder: '', url: '', history: [], totpSecret: '', ...data, ...meta };
           } catch {
             return {
               site: '(no se pudo descifrar)',
@@ -75,6 +77,7 @@ export default function Dashboard() {
               folder: '',
               url: '',
               history: [],
+              totpSecret: '',
               ...meta
             };
           }
@@ -205,6 +208,9 @@ export default function Dashboard() {
         <div className="dashboard-header-right">
           <span className="user-email">{email}</span>
           <ThemeToggle />
+          <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
+            <FiKey className="icon-inline" /> Contraseña maestra
+          </button>
           <button type="button" className="secondary" onClick={() => logout()}>
             <FiLogOut className="icon-inline" /> Cerrar sesión
           </button>
@@ -339,6 +345,10 @@ export default function Dashboard() {
 
       {historyFor && (
         <PasswordHistoryModal credential={historyFor} onClose={() => setHistoryFor(null)} />
+      )}
+
+      {showChangePassword && (
+        <ChangeMasterPasswordModal onClose={() => setShowChangePassword(false)} />
       )}
     </div>
   );

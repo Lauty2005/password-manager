@@ -1,4 +1,5 @@
 import SiteAvatar from './SiteAvatar';
+import TotpCode from './TotpCode';
 import {
   FiFolder, FiExternalLink, FiEye, FiEyeOff, FiCopy, FiEdit2, FiTrash2,
   FiStar, FiRotateCcw, FiXCircle, FiClock, FiAlertTriangle
@@ -100,6 +101,7 @@ export default function CredentialItem({
           </button>
         )}
       </div>
+      {!trashMode && credential.totpSecret && <TotpCode secret={credential.totpSecret} />}
       <div className="credential-actions">
         {trashMode ? (
           <>

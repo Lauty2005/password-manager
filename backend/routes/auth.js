@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -77,6 +78,38 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '2h' });
     res.json({ token, email: user.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
+// Cambio de master password. El cliente ya re-cifro TODAS sus credenciales
+// (activas y en papelera) con la nueva encryptionKey ANTES de llamar a esto --
+// ver frontend/src/lib/masterPassword.js. Aca solo actualizamos el material
+// de auth, y es literalmente el ultimo paso de todo el flujo: si esto se
+// llega a llamar es porque el re-cifrado de credenciales ya termino bien.
+router.put('/master-password', auth, async (req, res) => {
+  try {
+    const { oldAuthKey, newAuthKey } = req.body;
+    if (!oldAuthKey || !newAuthKey) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const valid = await bcrypt.compare(oldAuthKey, user.authHash);
+    if (!valid) {
+      return res.status(401).json({ error: 'La contraseña actual no es correcta' });
+    }
+
+    user.authHash = await bcrypt.hash(newAuthKey, 10);
+    await user.save();
+
+    res.json({ message: 'Contraseña maestra actualizada' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });

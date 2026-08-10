@@ -37,6 +37,13 @@ export const api = {
       body: JSON.stringify({ email, authKey })
     }),
 
+  changeMasterPassword: (token, oldAuthKey, newAuthKey) =>
+    request('/auth/master-password', {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify({ oldAuthKey, newAuthKey })
+    }),
+
   listCredentials: (token, { trash = false } = {}) =>
     request(`/credentials${trash ? '?trash=1' : ''}`, { headers: authHeaders(token) }),
 

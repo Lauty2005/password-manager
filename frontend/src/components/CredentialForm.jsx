@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
+import { normalizeTotpSecret, base32Decode } from '../lib/totp';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 import SiteAvatar from './SiteAvatar';
 import { FiEye, FiEyeOff, FiRefreshCw } from 'react-icons/fi';
@@ -12,6 +13,7 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [folder, setFolder] = useState(initialData?.folder || '');
   const [tagsInput, setTagsInput] = useState((initialData?.tags || []).join(', '));
+  const [totpSecret, setTotpSecret] = useState(initialData?.totpSecret || '');
   const [showPassword, setShowPassword] = useState(false);
   const [genLength, setGenLength] = useState(20);
   const [genOptions, setGenOptions] = useState({ lower: true, upper: true, numbers: true, symbols: true });
@@ -49,6 +51,18 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    let normalizedTotp = '';
+    if (totpSecret.trim()) {
+      normalizedTotp = normalizeTotpSecret(totpSecret);
+      try {
+        base32Decode(normalizedTotp);
+      } catch {
+        setError('El código 2FA no es válido (tiene que ser el secreto en base32 que te da el sitio)');
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       await onSave({
@@ -58,7 +72,8 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
         password,
         notes,
         folder: folder.trim(),
-        tags: parseTags(tagsInput)
+        tags: parseTags(tagsInput),
+        totpSecret: normalizedTotp
       });
     } catch (err) {
       setError(err.message);
@@ -170,6 +185,15 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
       <label>
         Notas (opcional)
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+      </label>
+
+      <label>
+        Código 2FA / TOTP (opcional)
+        <input
+          value={totpSecret}
+          onChange={(e) => setTotpSecret(e.target.value)}
+          placeholder="El secreto que te da el sitio al activar el 2FA"
+        />
       </label>
 
       {error && <p className="auth-error">{error}</p>}
