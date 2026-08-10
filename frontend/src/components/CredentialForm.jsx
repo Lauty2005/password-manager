@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
 
-export default function CredentialForm({ initialData, onSave, onCancel }) {
+export default function CredentialForm({ initialData, onSave, onCancel, existingFolders = [] }) {
   const [site, setSite] = useState(initialData?.site || '');
   const [username, setUsername] = useState(initialData?.username || '');
   const [password, setPassword] = useState(initialData?.password || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
+  const [folder, setFolder] = useState(initialData?.folder || '');
   const [tagsInput, setTagsInput] = useState((initialData?.tags || []).join(', '));
   const [showPassword, setShowPassword] = useState(false);
   const [genLength, setGenLength] = useState(20);
@@ -36,7 +37,7 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
     setError('');
     setSaving(true);
     try {
-      await onSave({ site, username, password, notes, tags: parseTags(tagsInput) });
+      await onSave({ site, username, password, notes, folder: folder.trim(), tags: parseTags(tagsInput) });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -83,6 +84,21 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
         />
         <button type="button" onClick={handleGenerate}>Generar contraseña segura</button>
       </div>
+
+      <label>
+        Carpeta (opcional)
+        <input
+          value={folder}
+          onChange={(e) => setFolder(e.target.value)}
+          placeholder="Trabajo, Personal, Banco..."
+          list="folder-options"
+        />
+        <datalist id="folder-options">
+          {existingFolders.map((f) => (
+            <option key={f} value={f} />
+          ))}
+        </datalist>
+      </label>
 
       <label>
         Tags (separados por coma, opcional)
