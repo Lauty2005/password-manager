@@ -7,7 +7,9 @@ import CredentialItem from './CredentialItem';
 import ThemeToggle from './ThemeToggle';
 import PasswordHistoryModal from './PasswordHistoryModal';
 import ChangeMasterPasswordModal from './ChangeMasterPasswordModal';
-import { FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft, FiKey, FiInbox } from 'react-icons/fi';
+import {
+  FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft, FiKey, FiInbox, FiSearch
+} from 'react-icons/fi';
 
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Más recientes' },
@@ -209,10 +211,10 @@ export default function Dashboard() {
           <span className="user-email">{email}</span>
           <ThemeToggle />
           <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
-            <FiKey className="icon-inline" /> Contraseña maestra
+            <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
           </button>
           <button type="button" className="secondary" onClick={() => logout()}>
-            <FiLogOut className="icon-inline" /> Cerrar sesión
+            <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
           </button>
         </div>
       </header>
@@ -226,12 +228,15 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="dashboard-toolbar">
-          <input
-            className="search-input"
-            placeholder="Buscar por sitio o usuario..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="search-input-wrap">
+            <FiSearch className="search-input-icon" />
+            <input
+              className="search-input"
+              placeholder="Buscar por sitio o usuario..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
           <select
             className="sort-select"
             value={sortBy}
@@ -243,9 +248,9 @@ export default function Dashboard() {
             ))}
           </select>
           <button type="button" className="secondary" onClick={() => setShowTrash(true)}>
-            <FiTrash2 className="icon-inline" /> Papelera
+            <FiTrash2 className="icon-inline" /> <span className="btn-label">Papelera</span>
           </button>
-          <button type="button" onClick={() => setEditing('new')}>
+          <button type="button" className="primary" onClick={() => setEditing('new')}>
             <FiPlus className="icon-inline" /> Nueva credencial
           </button>
         </div>

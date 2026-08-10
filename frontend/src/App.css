@@ -125,16 +125,43 @@ label {
 
 /* --- Auth --- */
 
-.auth-card {
-  max-width: 380px;
-  margin: 40px auto;
-  padding: 32px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+.auth-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   text-align: center;
 }
 
-.auth-card h1 {
+.auth-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.auth-content form {
+  width: 100%;
+  text-align: left;
+}
+
+.auth-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 20px;
+}
+
+.auth-title {
   font-size: 28px;
   margin: 0 0 6px;
 }
@@ -144,16 +171,47 @@ label {
   font-size: 14px;
 }
 
-.auth-card form {
-  text-align: left;
+.password-input-wrap {
+  position: relative;
 }
 
-.auth-card button[type='submit'] {
-  width: 100%;
+.password-input-wrap input {
+  padding-right: 44px;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 8px;
+  color: var(--text);
+}
+
+.password-toggle-icon:hover {
+  border-color: transparent;
+  color: var(--text-h);
+}
+
+button.primary {
   background: var(--accent);
   color: #fff;
   border: none;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
   margin-top: 4px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .link-button {
@@ -213,9 +271,23 @@ label {
   margin: 20px 0;
 }
 
-.search-input {
+.search-input-wrap {
+  position: relative;
   flex: 1;
   min-width: 160px;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 38px;
 }
 
 .sort-select {
@@ -441,18 +513,26 @@ label {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
+/* Cada credencial tiene dos zonas: arriba info+password (que envuelven
+   libremente entre sí) y abajo las acciones, separadas por un borde. */
 .credential-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.credential-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
   flex-wrap: wrap;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
+  gap: 12px;
 }
 
 .credential-info {
@@ -488,6 +568,8 @@ label {
 .credential-actions {
   display: flex;
   gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
 }
 
 /* --- Modal / form de credencial --- */
@@ -604,9 +686,10 @@ label {
     padding: 16px 12px 40px;
   }
 
-  .auth-card {
-    margin: 20px auto;
-    padding: 24px;
+  .auth-icon-badge {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
   }
 
   .dashboard-header {
@@ -636,9 +719,10 @@ label {
     font-size: 14px;
   }
 
-  /* La fila de credencial pasa de "todo en una línea que se corta" a
-     bloques apilados: avatar+info, password, TOTP, acciones. */
-  .credential-item {
+  /* La zona superior de la tarjeta (avatar+info, password, TOTP) pasa de
+     una fila que se corta a bloques apilados. La zona de acciones ya es
+     su propia fila con borde separador a cualquier ancho. */
+  .credential-top {
     flex-direction: column;
     align-items: stretch;
   }
@@ -679,5 +763,29 @@ label {
     padding: 20px;
     max-height: none;
     margin: 12px 0;
+  }
+}
+
+/* --- Responsive: pantallas muy angostas (celulares) ---
+   El texto de las acciones secundarias del header/toolbar se esconde y
+   quedan como botones solo-ícono (con title para accesibilidad), así entran
+   todas en una fila sin desbordar. Las acciones primarias (email, tema,
+   "Nueva credencial") siempre muestran su contenido completo. */
+@media (max-width: 420px) {
+  .dashboard-header-right .btn-label,
+  .dashboard-toolbar .btn-label {
+    display: none;
+  }
+
+  .dashboard-header-right button,
+  .dashboard-toolbar button {
+    padding: 8px 10px;
+  }
+
+  .user-email {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
