@@ -11,6 +11,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [activeTag, setActiveTag] = useState(null);
   const [editing, setEditing] = useState(null); // null | 'new' | credencial
   const [revealedId, setRevealedId] = useState(null);
 
@@ -23,9 +24,9 @@ export default function Dashboard() {
         raw.map(async (item) => {
           try {
             const data = await decryptData(encryptionKey, item.ciphertext, item.iv);
-            return { _id: item._id, ...data };
+            return { _id: item._id, tags: [], ...data };
           } catch {
-            return { _id: item._id, site: '(no se pudo descifrar)', username: '', password: '', notes: '' };
+            return { _id: item._id, site: '(no se pudo descifrar)', username: '', password: '', notes: '', tags: [] };
           }
         })
       );
@@ -58,11 +59,23 @@ export default function Dashboard() {
     await loadCredentials();
   };
 
-  const filtered = credentials.filter(
-    (c) =>
-      c.site.toLowerCase().includes(search.toLowerCase()) ||
-      c.username.toLowerCase().includes(search.toLowerCase())
+  const allTags = [...new Set(credentials.flatMap((c) => c.tags || []))].sort((a, b) =>
+    a.localeCompare(b)
   );
+
+  const filtered = credentials.filter((c) => {
+    const term = search.toLowerCase();
+    const matchesSearch =
+      !term ||
+      c.site.toLowerCase().includes(term) ||
+      c.username.toLowerCase().includes(term) ||
+      (c.tags || []).some((tag) => tag.toLowerCase().includes(term));
+
+    const matchesTag =
+      !activeTag || (c.tags || []).some((tag) => tag.toLowerCase() === activeTag.toLowerCase());
+
+    return matchesSearch && matchesTag;
+  });
 
   return (
     <div className="dashboard">
@@ -83,6 +96,28 @@ export default function Dashboard() {
         />
         <button type="button" onClick={() => setEditing('new')}>+ Nueva credencial</button>
       </div>
+
+      {allTags.length > 0 && (
+        <div className="tag-filter-row">
+          <button
+            type="button"
+            className={activeTag === null ? 'tag-chip tag-chip-active' : 'tag-chip'}
+            onClick={() => setActiveTag(null)}
+          >
+            Todas
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              className={activeTag === tag ? 'tag-chip tag-chip-active' : 'tag-chip'}
+              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {error && <p className="auth-error">{error}</p>}
       {loading && <p>Descifrando...</p>}

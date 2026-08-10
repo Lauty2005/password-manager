@@ -12,6 +12,13 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
       <div className="credential-main">
         <strong>{credential.site}</strong>
         <span>{credential.username}</span>
+        {credential.tags && credential.tags.length > 0 && (
+          <div className="credential-tags">
+            {credential.tags.map((tag) => (
+              <span key={tag} className="tag-chip tag-chip-small">{tag}</span>
+            ))}
+          </div>
+        )}
       </div>
       <div className="credential-password">
         <code>{revealed ? credential.password : '••••••••••'}</code>

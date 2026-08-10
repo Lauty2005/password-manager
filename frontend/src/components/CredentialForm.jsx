@@ -6,6 +6,7 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
   const [username, setUsername] = useState(initialData?.username || '');
   const [password, setPassword] = useState(initialData?.password || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
+  const [tagsInput, setTagsInput] = useState((initialData?.tags || []).join(', '));
   const [showPassword, setShowPassword] = useState(false);
   const [genLength, setGenLength] = useState(20);
   const [saving, setSaving] = useState(false);
@@ -16,12 +17,26 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
     setShowPassword(true);
   };
 
+  const parseTags = (raw) => {
+    const seen = new Set();
+    const tags = [];
+    for (const part of raw.split(',')) {
+      const tag = part.trim();
+      if (!tag) continue;
+      const key = tag.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      tags.push(tag);
+    }
+    return tags;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSaving(true);
     try {
-      await onSave({ site, username, password, notes });
+      await onSave({ site, username, password, notes, tags: parseTags(tagsInput) });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -68,6 +83,15 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
         />
         <button type="button" onClick={handleGenerate}>Generar contraseña segura</button>
       </div>
+
+      <label>
+        Tags (separados por coma, opcional)
+        <input
+          value={tagsInput}
+          onChange={(e) => setTagsInput(e.target.value)}
+          placeholder="trabajo, banco, redes"
+        />
+      </label>
 
       <label>
         Notas (opcional)
