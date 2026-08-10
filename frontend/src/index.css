@@ -11,6 +11,13 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
+  /* Colores de estado: se mantienen iguales entre temas a propósito, para
+     que "peligro"/"éxito"/"favorito" se reconozcan siempre igual. */
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-favorite: #eab308;
+  --color-alert: #f59e0b;
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;

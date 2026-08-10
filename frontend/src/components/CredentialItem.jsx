@@ -47,47 +47,49 @@ export default function CredentialItem({
 
   return (
     <li className="credential-item">
-      <SiteAvatar site={credential.site} />
-      <div className="credential-main">
-        {trashMode && (
-          <span className="credential-trash-expiry">
-            Se borra para siempre en {daysUntilPurge(credential.deletedAt)} día
-            {daysUntilPurge(credential.deletedAt) === 1 ? '' : 's'}
-          </span>
-        )}
-        {credential.folder && (
-          <span className="credential-folder">
-            <FiFolder className="icon-inline" /> {credential.folder}
-          </span>
-        )}
-        {hasLink ? (
-          <a
-            className="credential-site-link"
-            href={credential.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <strong>{credential.site}</strong> <FiExternalLink className="icon-inline" />
-          </a>
-        ) : (
-          <strong>{credential.site}</strong>
-        )}
-        {!trashMode && reusedCount > 1 && (
-          <span
-            className="reused-badge"
-            title={`Esta contraseña se repite en ${reusedCount} credenciales`}
-          >
-            <FiAlertTriangle className="icon-inline" /> Contraseña repetida
-          </span>
-        )}
-        <span>{credential.username}</span>
-        {credential.tags && credential.tags.length > 0 && (
-          <div className="credential-tags">
-            {credential.tags.map((tag) => (
-              <span key={tag} className="tag-chip tag-chip-small">{tag}</span>
-            ))}
-          </div>
-        )}
+      <div className="credential-info">
+        <SiteAvatar site={credential.site} />
+        <div className="credential-main">
+          {trashMode && (
+            <span className="credential-trash-expiry">
+              Se borra para siempre en {daysUntilPurge(credential.deletedAt)} día
+              {daysUntilPurge(credential.deletedAt) === 1 ? '' : 's'}
+            </span>
+          )}
+          {credential.folder && (
+            <span className="credential-folder">
+              <FiFolder className="icon-inline" /> {credential.folder}
+            </span>
+          )}
+          {hasLink ? (
+            <a
+              className="credential-site-link"
+              href={credential.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <strong>{credential.site}</strong> <FiExternalLink className="icon-inline" />
+            </a>
+          ) : (
+            <strong>{credential.site}</strong>
+          )}
+          {!trashMode && reusedCount > 1 && (
+            <span
+              className="reused-badge"
+              title={`Esta contraseña se repite en ${reusedCount} credenciales`}
+            >
+              <FiAlertTriangle className="icon-inline" /> Contraseña repetida
+            </span>
+          )}
+          <span>{credential.username}</span>
+          {credential.tags && credential.tags.length > 0 && (
+            <div className="credential-tags">
+              {credential.tags.map((tag) => (
+                <span key={tag} className="tag-chip tag-chip-small">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="credential-password">
         <code>{revealed ? credential.password : '••••••••••'}</code>

@@ -62,10 +62,15 @@ button {
   color: var(--text-h);
   border-radius: 8px;
   padding: 10px 16px;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
 }
 
 button:hover {
   border-color: var(--accent-border);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 button:disabled {
@@ -78,8 +83,17 @@ button.secondary {
 }
 
 button.danger {
-  color: #ef4444;
-  border-color: #ef4444;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 input,
@@ -92,6 +106,12 @@ textarea {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+  transition: border-color 0.15s ease;
+}
+
+input:hover,
+textarea:hover {
+  border-color: var(--accent-border);
 }
 
 label {
@@ -146,13 +166,13 @@ label {
 }
 
 .auth-error {
-  color: #ef4444;
+  color: var(--color-danger);
   font-size: 13px;
   margin: 4px 0 12px;
 }
 
 .auth-info {
-  color: #22c55e;
+  color: var(--color-success);
   font-size: 13px;
   margin: 4px 0 12px;
 }
@@ -188,12 +208,14 @@ label {
 .dashboard-toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   margin: 20px 0;
 }
 
 .search-input {
   flex: 1;
+  min-width: 160px;
 }
 
 .sort-select {
@@ -227,14 +249,54 @@ label {
 }
 
 .favorite-active {
-  color: #eab308;
-  border-color: #eab308;
+  color: var(--color-favorite);
+  border-color: var(--color-favorite);
 }
 
 .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   text-align: center;
   opacity: 0.7;
-  padding: 40px 0;
+  padding: 48px 0;
+}
+
+.empty-state-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 6px;
+  opacity: 0.6;
+}
+
+.empty-state-hint {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 0;
+  opacity: 0.75;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .tag-filter-row {
@@ -280,7 +342,7 @@ label {
 
 .credential-trash-expiry {
   font-size: 11px;
-  color: #ef4444;
+  color: var(--color-danger);
   opacity: 0.85;
   margin-bottom: 2px;
 }
@@ -314,7 +376,7 @@ label {
 
 .totp-error {
   font-size: 11px;
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
 .reused-badge {
@@ -322,7 +384,7 @@ label {
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: #f59e0b;
+  color: var(--color-alert);
   margin-top: 2px;
 }
 
@@ -391,6 +453,13 @@ label {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 14px 16px;
+}
+
+.credential-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .credential-main {
@@ -526,4 +595,89 @@ label {
   background: var(--accent);
   color: #fff;
   border: none;
+}
+
+/* --- Responsive: pantallas chicas --- */
+
+@media (max-width: 640px) {
+  #root {
+    padding: 16px 12px 40px;
+  }
+
+  .auth-card {
+    margin: 20px auto;
+    padding: 24px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-toolbar {
+    margin: 16px 0;
+  }
+
+  .search-input {
+    flex: 1 1 100%;
+  }
+
+  .sort-select {
+    flex: 1;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* La fila de credencial pasa de "todo en una línea que se corta" a
+     bloques apilados: avatar+info, password, TOTP, acciones. */
+  .credential-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .credential-info {
+    width: 100%;
+  }
+
+  .credential-main {
+    min-width: 0;
+  }
+
+  .credential-password {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .credential-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .totp-block {
+    width: 100%;
+  }
+
+  .password-row {
+    flex-wrap: wrap;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .credential-form {
+    padding: 20px;
+    max-height: none;
+    margin: 12px 0;
+  }
 }

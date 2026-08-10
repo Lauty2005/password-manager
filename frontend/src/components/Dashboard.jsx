@@ -7,7 +7,7 @@ import CredentialItem from './CredentialItem';
 import ThemeToggle from './ThemeToggle';
 import PasswordHistoryModal from './PasswordHistoryModal';
 import ChangeMasterPasswordModal from './ChangeMasterPasswordModal';
-import { FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft, FiKey } from 'react-icons/fi';
+import { FiLock, FiPlus, FiLogOut, FiFolder, FiTrash2, FiArrowLeft, FiKey, FiInbox } from 'react-icons/fi';
 
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Más recientes' },
@@ -305,11 +305,30 @@ export default function Dashboard() {
       )}
 
       {error && <p className="auth-error">{error}</p>}
-      {loading && <p>Descifrando...</p>}
+
+      {loading && (
+        <div className="loading-state">
+          <span className="spinner" /> Descifrando...
+        </div>
+      )}
+
       {!loading && sorted.length === 0 && (
-        <p className="empty-state">
-          {showTrash ? 'La papelera está vacía.' : 'No hay credenciales guardadas todavía.'}
-        </p>
+        <div className="empty-state">
+          {showTrash ? (
+            <>
+              <FiTrash2 className="empty-state-icon" />
+              <p>La papelera está vacía.</p>
+            </>
+          ) : (
+            <>
+              <FiInbox className="empty-state-icon" />
+              <p>No hay credenciales guardadas todavía.</p>
+              <p className="empty-state-hint">
+                Usá el botón "Nueva credencial" de arriba para agregar la primera.
+              </p>
+            </>
+          )}
+        </div>
       )}
 
       <ul className="credential-list">

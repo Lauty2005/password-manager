@@ -51,7 +51,7 @@ export default function TotpCode({ secret }) {
           className="totp-bar-fill"
           style={{
             width: `${(remaining / TOTP_PERIOD) * 100}%`,
-            background: remaining <= 5 ? '#ef4444' : 'var(--accent)'
+            background: remaining <= 5 ? 'var(--color-danger)' : 'var(--accent)'
           }}
         />
       </div>
