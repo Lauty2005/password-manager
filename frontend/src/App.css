@@ -278,6 +278,13 @@ label {
   margin-bottom: 2px;
 }
 
+.credential-trash-expiry {
+  font-size: 11px;
+  color: #ef4444;
+  opacity: 0.85;
+  margin-bottom: 2px;
+}
+
 .folder-filter-row {
   margin-bottom: 8px;
 }

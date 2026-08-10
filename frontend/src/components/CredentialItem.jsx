@@ -10,6 +10,15 @@ function isSafeUrl(url) {
   return /^https?:\/\//i.test(url || '');
 }
 
+// Debe coincidir con TRASH_RETENTION_DAYS del backend (backend/routes/credentials.js).
+const TRASH_RETENTION_DAYS = 30;
+
+function daysUntilPurge(deletedAt) {
+  if (!deletedAt) return null;
+  const purgeTime = new Date(deletedAt).getTime() + TRASH_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+  return Math.max(Math.ceil((purgeTime - Date.now()) / (24 * 60 * 60 * 1000)), 0);
+}
+
 export default function CredentialItem({
   credential,
   revealed,
@@ -37,6 +46,12 @@ export default function CredentialItem({
     <li className="credential-item">
       <SiteAvatar site={credential.site} />
       <div className="credential-main">
+        {trashMode && (
+          <span className="credential-trash-expiry">
+            Se borra para siempre en {daysUntilPurge(credential.deletedAt)} día
+            {daysUntilPurge(credential.deletedAt) === 1 ? '' : 's'}
+          </span>
+        )}
         {credential.folder && (
           <span className="credential-folder">
             <FiFolder className="icon-inline" /> {credential.folder}

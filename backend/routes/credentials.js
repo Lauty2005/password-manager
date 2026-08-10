@@ -4,11 +4,22 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
+const TRASH_RETENTION_DAYS = 30;
+
+// Borra para siempre lo que lleve mas de TRASH_RETENTION_DAYS en la papelera.
+// Se llama "al pasar" en cada listado en vez de usar un cron aparte: no hay
+// tanto trafico como para que importe la carga extra, y evita sumar un proceso mas.
+async function purgeExpiredTrash() {
+  const threshold = new Date(Date.now() - TRASH_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+  await Credential.deleteMany({ deletedAt: { $ne: null, $lt: threshold } });
+}
+
 router.use(auth);
 
 // Lista los blobs cifrados del usuario. El descifrado pasa 100% en el cliente.
 // ?trash=1 devuelve solo las que estan en la papelera (deletedAt seteado).
 router.get('/', async (req, res) => {
+  await purgeExpiredTrash();
   const isTrash = req.query.trash === '1' || req.query.trash === 'true';
   const filter = { userId: req.userId, deletedAt: isTrash ? { $ne: null } : null };
   const sort = isTrash ? { deletedAt: -1 } : { createdAt: -1 };
