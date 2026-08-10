@@ -1,3 +1,11 @@
+import SiteAvatar from './SiteAvatar';
+
+// Solo se linkea si es http(s) real, para no terminar generando un
+// href con "javascript:" o algo raro a partir de datos guardados.
+function isSafeUrl(url) {
+  return /^https?:\/\//i.test(url || '');
+}
+
 export default function CredentialItem({ credential, revealed, onToggleReveal, onEdit, onDelete }) {
   const copyPassword = async () => {
     try {
@@ -7,11 +15,25 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
     }
   };
 
+  const hasLink = isSafeUrl(credential.url);
+
   return (
     <li className="credential-item">
+      <SiteAvatar site={credential.site} />
       <div className="credential-main">
         {credential.folder && <span className="credential-folder">📁 {credential.folder}</span>}
-        <strong>{credential.site}</strong>
+        {hasLink ? (
+          <a
+            className="credential-site-link"
+            href={credential.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>{credential.site}</strong> 🔗
+          </a>
+        ) : (
+          <strong>{credential.site}</strong>
+        )}
         <span>{credential.username}</span>
         {credential.tags && credential.tags.length > 0 && (
           <div className="credential-tags">

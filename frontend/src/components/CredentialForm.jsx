@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
+import SiteAvatar from './SiteAvatar';
 
 export default function CredentialForm({ initialData, onSave, onCancel, existingFolders = [] }) {
   const [site, setSite] = useState(initialData?.site || '');
+  const [url, setUrl] = useState(initialData?.url || '');
   const [username, setUsername] = useState(initialData?.username || '');
   const [password, setPassword] = useState(initialData?.password || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
@@ -48,7 +50,15 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
     setError('');
     setSaving(true);
     try {
-      await onSave({ site, username, password, notes, folder: folder.trim(), tags: parseTags(tagsInput) });
+      await onSave({
+        site,
+        url: url.trim(),
+        username,
+        password,
+        notes,
+        folder: folder.trim(),
+        tags: parseTags(tagsInput)
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -60,9 +70,22 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
     <form className="credential-form" onSubmit={handleSubmit}>
       <h2>{initialData ? 'Editar' : 'Nueva'} credencial</h2>
 
+      <div className="site-preview-row">
+        <SiteAvatar site={site} size={44} />
+        <label className="site-preview-input">
+          Sitio / App
+          <input value={site} onChange={(e) => setSite(e.target.value)} placeholder="github.com" required />
+        </label>
+      </div>
+
       <label>
-        Sitio / App
-        <input value={site} onChange={(e) => setSite(e.target.value)} placeholder="github.com" required />
+        URL (opcional)
+        <input
+          type="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://github.com/login"
+        />
       </label>
 
       <label>

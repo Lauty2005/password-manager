@@ -5,6 +5,38 @@
   padding: 24px 20px 60px;
 }
 
+.site-avatar {
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.site-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.site-preview-input {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+
+.credential-site-link {
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.credential-site-link:hover {
+  text-decoration: underline;
+}
+
 button {
   font: inherit;
   cursor: pointer;

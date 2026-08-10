@@ -25,7 +25,7 @@ export default function Dashboard() {
         raw.map(async (item) => {
           try {
             const data = await decryptData(encryptionKey, item.ciphertext, item.iv);
-            return { _id: item._id, tags: [], folder: '', ...data };
+            return { _id: item._id, tags: [], folder: '', url: '', ...data };
           } catch {
             return {
               _id: item._id,
@@ -34,7 +34,8 @@ export default function Dashboard() {
               password: '',
               notes: '',
               tags: [],
-              folder: ''
+              folder: '',
+              url: ''
             };
           }
         })
