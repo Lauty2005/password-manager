@@ -9,11 +9,21 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
   const [tagsInput, setTagsInput] = useState((initialData?.tags || []).join(', '));
   const [showPassword, setShowPassword] = useState(false);
   const [genLength, setGenLength] = useState(20);
+  const [genOptions, setGenOptions] = useState({ lower: true, upper: true, numbers: true, symbols: true });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const toggleGenOption = (key) => {
+    setGenOptions((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const handleGenerate = () => {
-    setPassword(generatePassword(genLength));
+    if (!Object.values(genOptions).some(Boolean)) {
+      setError('Elegí al menos un tipo de carácter para generar la contraseña');
+      return;
+    }
+    setError('');
+    setPassword(generatePassword(genLength, genOptions));
     setShowPassword(true);
   };
 
@@ -72,6 +82,25 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
           </button>
         </div>
       </label>
+
+      <div className="generator-options-row">
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.upper} onChange={() => toggleGenOption('upper')} />
+          Mayúsculas (A-Z)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.lower} onChange={() => toggleGenOption('lower')} />
+          Minúsculas (a-z)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.numbers} onChange={() => toggleGenOption('numbers')} />
+          Números (0-9)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.symbols} onChange={() => toggleGenOption('symbols')} />
+          Símbolos (!@#$...)
+        </label>
+      </div>
 
       <div className="generator-row">
         <input
