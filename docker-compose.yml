@@ -19,5 +19,20 @@ services:
       - mongo_data:/data/db
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Se hornea en el bundle en build-time (Vite), no es una env var de runtime.
+        # localhost:3001 porque quien pega al backend es el navegador del usuario,
+        # no el contenedor -- ahi es donde el backend esta publicado.
+        VITE_API_URL: http://localhost:3001/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   mongo_data:
