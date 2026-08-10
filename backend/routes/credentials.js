@@ -7,8 +7,12 @@ const router = express.Router();
 router.use(auth);
 
 // Lista los blobs cifrados del usuario. El descifrado pasa 100% en el cliente.
+// ?trash=1 devuelve solo las que estan en la papelera (deletedAt seteado).
 router.get('/', async (req, res) => {
-  const credentials = await Credential.find({ userId: req.userId }).sort({ createdAt: -1 });
+  const isTrash = req.query.trash === '1' || req.query.trash === 'true';
+  const filter = { userId: req.userId, deletedAt: isTrash ? { $ne: null } : null };
+  const sort = isTrash ? { deletedAt: -1 } : { createdAt: -1 };
+  const credentials = await Credential.find(filter).sort(sort);
   res.json(credentials);
 });
 
@@ -50,12 +54,79 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Marca/desmarca como favorita.
+router.patch('/:id/favorite', async (req, res) => {
+  try {
+    const credential = await Credential.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { isFavorite: !!req.body.isFavorite },
+      { new: true }
+    );
+    if (!credential) {
+      return res.status(404).json({ error: 'No encontrada' });
+    }
+    res.json(credential);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
+// Se llama cuando el usuario revela o copia la password, para poder ordenar por "mas usados".
+router.post('/:id/touch', async (req, res) => {
+  try {
+    const credential = await Credential.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { $inc: { usageCount: 1 }, lastUsedAt: new Date() },
+      { new: true }
+    );
+    if (!credential) {
+      return res.status(404).json({ error: 'No encontrada' });
+    }
+    res.json(credential);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
+// Soft delete: manda a la papelera en vez de borrar.
 router.delete('/:id', async (req, res) => {
-  const result = await Credential.findOneAndDelete({ _id: req.params.id, userId: req.userId });
+  const result = await Credential.findOneAndUpdate(
+    { _id: req.params.id, userId: req.userId, deletedAt: null },
+    { deletedAt: new Date() },
+    { new: true }
+  );
   if (!result) {
     return res.status(404).json({ error: 'No encontrada' });
   }
-  res.json({ message: 'Eliminada' });
+  res.json({ message: 'Movida a la papelera' });
+});
+
+// Saca de la papelera.
+router.post('/:id/restore', async (req, res) => {
+  const result = await Credential.findOneAndUpdate(
+    { _id: req.params.id, userId: req.userId, deletedAt: { $ne: null } },
+    { deletedAt: null },
+    { new: true }
+  );
+  if (!result) {
+    return res.status(404).json({ error: 'No encontrada' });
+  }
+  res.json(result);
+});
+
+// Borrado definitivo, solo permitido si ya estaba en la papelera.
+router.delete('/:id/permanent', async (req, res) => {
+  const result = await Credential.findOneAndDelete({
+    _id: req.params.id,
+    userId: req.userId,
+    deletedAt: { $ne: null }
+  });
+  if (!result) {
+    return res.status(404).json({ error: 'No encontrada' });
+  }
+  res.json({ message: 'Eliminada definitivamente' });
 });
 
 module.exports = router;

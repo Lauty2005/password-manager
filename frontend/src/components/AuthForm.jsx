@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FiLock, FiAlertTriangle } from 'react-icons/fi';
+import ThemeToggle from './ThemeToggle';
 
 export default function AuthForm() {
   const { login, register, sessionMessage } = useAuth();
@@ -46,6 +47,7 @@ export default function AuthForm() {
 
   return (
     <div className="auth-card">
+      <div className="auth-theme-toggle"><ThemeToggle /></div>
       <h1><FiLock className="icon-inline" /> Password Manager</h1>
       <p className="auth-subtitle">
         {mode === 'login' ? 'Iniciá sesión con tu master password' : 'Creá tu cuenta'}

@@ -1,5 +1,8 @@
 import SiteAvatar from './SiteAvatar';
-import { FiFolder, FiExternalLink, FiEye, FiEyeOff, FiCopy, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import {
+  FiFolder, FiExternalLink, FiEye, FiEyeOff, FiCopy, FiEdit2, FiTrash2,
+  FiStar, FiRotateCcw, FiXCircle
+} from 'react-icons/fi';
 
 // Solo se linkea si es http(s) real, para no terminar generando un
 // href con "javascript:" o algo raro a partir de datos guardados.
@@ -7,13 +10,25 @@ function isSafeUrl(url) {
   return /^https?:\/\//i.test(url || '');
 }
 
-export default function CredentialItem({ credential, revealed, onToggleReveal, onEdit, onDelete }) {
+export default function CredentialItem({
+  credential,
+  revealed,
+  trashMode = false,
+  onToggleReveal,
+  onCopy,
+  onEdit,
+  onDelete,
+  onToggleFavorite,
+  onRestore,
+  onPermanentDelete
+}) {
   const copyPassword = async () => {
     try {
       await navigator.clipboard.writeText(credential.password);
     } catch {
       // Clipboard API puede fallar en contextos no seguros (http); no es crítico.
     }
+    onCopy?.();
   };
 
   const hasLink = isSafeUrl(credential.url);
@@ -54,17 +69,40 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
           {revealed ? <FiEyeOff className="icon-inline" /> : <FiEye className="icon-inline" />}
           {revealed ? ' Ocultar' : ' Ver'}
         </button>
-        <button type="button" onClick={copyPassword}>
-          <FiCopy className="icon-inline" /> Copiar
-        </button>
+        {!trashMode && (
+          <button type="button" onClick={copyPassword}>
+            <FiCopy className="icon-inline" /> Copiar
+          </button>
+        )}
       </div>
       <div className="credential-actions">
-        <button type="button" onClick={onEdit}>
-          <FiEdit2 className="icon-inline" /> Editar
-        </button>
-        <button type="button" className="danger" onClick={onDelete}>
-          <FiTrash2 className="icon-inline" /> Borrar
-        </button>
+        {trashMode ? (
+          <>
+            <button type="button" onClick={onRestore}>
+              <FiRotateCcw className="icon-inline" /> Restaurar
+            </button>
+            <button type="button" className="danger" onClick={onPermanentDelete}>
+              <FiXCircle className="icon-inline" /> Eliminar para siempre
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              className={credential.isFavorite ? 'favorite-active' : ''}
+              onClick={onToggleFavorite}
+              title={credential.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorita'}
+            >
+              <FiStar className="icon-inline" />
+            </button>
+            <button type="button" onClick={onEdit}>
+              <FiEdit2 className="icon-inline" /> Editar
+            </button>
+            <button type="button" className="danger" onClick={onDelete}>
+              <FiTrash2 className="icon-inline" /> Borrar
+            </button>
+          </>
+        )}
       </div>
     </li>
   );

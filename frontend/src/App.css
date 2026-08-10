@@ -187,12 +187,48 @@ label {
 
 .dashboard-toolbar {
   display: flex;
+  align-items: center;
   gap: 10px;
   margin: 20px 0;
 }
 
 .search-input {
   flex: 1;
+}
+
+.sort-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.theme-toggle {
+  padding: 8px 10px;
+}
+
+.theme-toggle .icon-inline {
+  margin: 0;
+}
+
+.auth-theme-toggle {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trash-title {
+  margin: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.favorite-active {
+  color: #eab308;
+  border-color: #eab308;
 }
 
 .empty-state {

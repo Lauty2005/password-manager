@@ -37,8 +37,8 @@ export const api = {
       body: JSON.stringify({ email, authKey })
     }),
 
-  listCredentials: (token) =>
-    request('/credentials', { headers: authHeaders(token) }),
+  listCredentials: (token, { trash = false } = {}) =>
+    request(`/credentials${trash ? '?trash=1' : ''}`, { headers: authHeaders(token) }),
 
   createCredential: (token, ciphertext, iv) =>
     request('/credentials', {
@@ -54,8 +54,33 @@ export const api = {
       body: JSON.stringify({ ciphertext, iv })
     }),
 
+  setFavorite: (token, id, isFavorite) =>
+    request(`/credentials/${id}/favorite`, {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: JSON.stringify({ isFavorite })
+    }),
+
+  touchCredential: (token, id) =>
+    request(`/credentials/${id}/touch`, {
+      method: 'POST',
+      headers: authHeaders(token)
+    }),
+
   deleteCredential: (token, id) =>
     request(`/credentials/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(token)
+    }),
+
+  restoreCredential: (token, id) =>
+    request(`/credentials/${id}/restore`, {
+      method: 'POST',
+      headers: authHeaders(token)
+    }),
+
+  permanentDeleteCredential: (token, id) =>
+    request(`/credentials/${id}/permanent`, {
       method: 'DELETE',
       headers: authHeaders(token)
     })
