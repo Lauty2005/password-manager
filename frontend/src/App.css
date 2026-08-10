@@ -285,6 +285,58 @@ label {
   margin-bottom: 2px;
 }
 
+.reused-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #f59e0b;
+  margin-top: 2px;
+}
+
+.history-modal {
+  max-width: 400px;
+}
+
+.history-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.history-modal-header h2 {
+  margin: 0;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.history-date {
+  font-size: 12px;
+  opacity: 0.65;
+  flex: 1;
+}
+
+.history-item button {
+  padding: 6px 8px;
+}
+
 .folder-filter-row {
   margin-bottom: 8px;
 }

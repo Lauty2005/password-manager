@@ -1,7 +1,7 @@
 import SiteAvatar from './SiteAvatar';
 import {
   FiFolder, FiExternalLink, FiEye, FiEyeOff, FiCopy, FiEdit2, FiTrash2,
-  FiStar, FiRotateCcw, FiXCircle
+  FiStar, FiRotateCcw, FiXCircle, FiClock, FiAlertTriangle
 } from 'react-icons/fi';
 
 // Solo se linkea si es http(s) real, para no terminar generando un
@@ -23,13 +23,15 @@ export default function CredentialItem({
   credential,
   revealed,
   trashMode = false,
+  reusedCount = 0,
   onToggleReveal,
   onCopy,
   onEdit,
   onDelete,
   onToggleFavorite,
   onRestore,
-  onPermanentDelete
+  onPermanentDelete,
+  onShowHistory
 }) {
   const copyPassword = async () => {
     try {
@@ -68,6 +70,14 @@ export default function CredentialItem({
           </a>
         ) : (
           <strong>{credential.site}</strong>
+        )}
+        {!trashMode && reusedCount > 1 && (
+          <span
+            className="reused-badge"
+            title={`Esta contraseña se repite en ${reusedCount} credenciales`}
+          >
+            <FiAlertTriangle className="icon-inline" /> Contraseña repetida
+          </span>
         )}
         <span>{credential.username}</span>
         {credential.tags && credential.tags.length > 0 && (
@@ -110,6 +120,11 @@ export default function CredentialItem({
             >
               <FiStar className="icon-inline" />
             </button>
+            {credential.history && credential.history.length > 0 && (
+              <button type="button" onClick={onShowHistory} title="Ver contraseñas anteriores">
+                <FiClock className="icon-inline" /> Historial
+              </button>
+            )}
             <button type="button" onClick={onEdit}>
               <FiEdit2 className="icon-inline" /> Editar
             </button>
