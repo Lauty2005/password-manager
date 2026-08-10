@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { FiLock, FiAlertTriangle } from 'react-icons/fi';
 
 export default function AuthForm() {
   const { login, register, sessionMessage } = useAuth();
@@ -45,7 +46,7 @@ export default function AuthForm() {
 
   return (
     <div className="auth-card">
-      <h1>🔐 Password Manager</h1>
+      <h1><FiLock className="icon-inline" /> Password Manager</h1>
       <p className="auth-subtitle">
         {mode === 'login' ? 'Iniciá sesión con tu master password' : 'Creá tu cuenta'}
       </p>
@@ -101,8 +102,8 @@ export default function AuthForm() {
       </button>
 
       <p className="auth-warning">
-        ⚠️ Si perdés tu master password no hay forma de recuperar tus contraseñas guardadas.
-        Ni vos ni nosotros la tenemos guardada en ningún lado.
+        <FiAlertTriangle className="icon-inline" /> Si perdés tu master password no hay forma de
+        recuperar tus contraseñas guardadas. Ni vos ni nosotros la tenemos guardada en ningún lado.
       </p>
     </div>
   );

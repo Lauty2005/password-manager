@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 import SiteAvatar from './SiteAvatar';
+import { FiEye, FiEyeOff, FiRefreshCw } from 'react-icons/fi';
 
 export default function CredentialForm({ initialData, onSave, onCancel, existingFolders = [] }) {
   const [site, setSite] = useState(initialData?.site || '');
@@ -103,7 +104,8 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
             required
           />
           <button type="button" onClick={() => setShowPassword((v) => !v)}>
-            {showPassword ? 'Ocultar' : 'Ver'}
+            {showPassword ? <FiEyeOff className="icon-inline" /> : <FiEye className="icon-inline" />}
+            {showPassword ? ' Ocultar' : ' Ver'}
           </button>
         </div>
         <PasswordStrengthMeter password={password} />
@@ -136,7 +138,9 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
           value={genLength}
           onChange={(e) => setGenLength(Number(e.target.value))}
         />
-        <button type="button" onClick={handleGenerate}>Generar contraseña segura</button>
+        <button type="button" onClick={handleGenerate}>
+          <FiRefreshCw className="icon-inline" /> Generar contraseña segura
+        </button>
       </div>
 
       <label>

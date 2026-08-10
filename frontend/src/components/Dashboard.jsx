@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { encryptData, decryptData } from '../lib/crypto';
 import CredentialForm from './CredentialForm';
 import CredentialItem from './CredentialItem';
+import { FiLock, FiPlus, FiLogOut, FiFolder } from 'react-icons/fi';
 
 export default function Dashboard() {
   const { token, encryptionKey, email, logout } = useAuth();
@@ -101,10 +102,12 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>🔐 Mis contraseñas</h1>
+        <h1><FiLock className="icon-inline" /> Mis contraseñas</h1>
         <div className="dashboard-header-right">
           <span className="user-email">{email}</span>
-          <button type="button" className="secondary" onClick={() => logout()}>Cerrar sesión</button>
+          <button type="button" className="secondary" onClick={() => logout()}>
+            <FiLogOut className="icon-inline" /> Cerrar sesión
+          </button>
         </div>
       </header>
 
@@ -115,7 +118,9 @@ export default function Dashboard() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button type="button" onClick={() => setEditing('new')}>+ Nueva credencial</button>
+        <button type="button" onClick={() => setEditing('new')}>
+          <FiPlus className="icon-inline" /> Nueva credencial
+        </button>
       </div>
 
       {allFolders.length > 0 && (
@@ -125,7 +130,7 @@ export default function Dashboard() {
             className={activeFolder === null ? 'tag-chip tag-chip-active' : 'tag-chip'}
             onClick={() => setActiveFolder(null)}
           >
-            📁 Todas
+            <FiFolder className="icon-inline" /> Todas
           </button>
           {allFolders.map((folder) => (
             <button
@@ -134,7 +139,7 @@ export default function Dashboard() {
               className={activeFolder === folder ? 'tag-chip tag-chip-active' : 'tag-chip'}
               onClick={() => setActiveFolder(activeFolder === folder ? null : folder)}
             >
-              📁 {folder}
+              <FiFolder className="icon-inline" /> {folder}
             </button>
           ))}
           {hasUnfiledCredential && (

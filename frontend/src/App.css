@@ -37,9 +37,21 @@
   text-decoration: underline;
 }
 
+.icon-inline {
+  vertical-align: -2px;
+  flex-shrink: 0;
+}
+
+h1 .icon-inline {
+  vertical-align: -4px;
+}
+
 button {
   font: inherit;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid var(--border);
   background: var(--code-bg);
   color: var(--text-h);

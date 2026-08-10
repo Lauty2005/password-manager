@@ -1,4 +1,5 @@
 import SiteAvatar from './SiteAvatar';
+import { FiFolder, FiExternalLink, FiEye, FiEyeOff, FiCopy, FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 // Solo se linkea si es http(s) real, para no terminar generando un
 // href con "javascript:" o algo raro a partir de datos guardados.
@@ -21,7 +22,11 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
     <li className="credential-item">
       <SiteAvatar site={credential.site} />
       <div className="credential-main">
-        {credential.folder && <span className="credential-folder">📁 {credential.folder}</span>}
+        {credential.folder && (
+          <span className="credential-folder">
+            <FiFolder className="icon-inline" /> {credential.folder}
+          </span>
+        )}
         {hasLink ? (
           <a
             className="credential-site-link"
@@ -29,7 +34,7 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
             target="_blank"
             rel="noopener noreferrer"
           >
-            <strong>{credential.site}</strong> 🔗
+            <strong>{credential.site}</strong> <FiExternalLink className="icon-inline" />
           </a>
         ) : (
           <strong>{credential.site}</strong>
@@ -45,12 +50,21 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
       </div>
       <div className="credential-password">
         <code>{revealed ? credential.password : '••••••••••'}</code>
-        <button type="button" onClick={onToggleReveal}>{revealed ? 'Ocultar' : 'Ver'}</button>
-        <button type="button" onClick={copyPassword}>Copiar</button>
+        <button type="button" onClick={onToggleReveal}>
+          {revealed ? <FiEyeOff className="icon-inline" /> : <FiEye className="icon-inline" />}
+          {revealed ? ' Ocultar' : ' Ver'}
+        </button>
+        <button type="button" onClick={copyPassword}>
+          <FiCopy className="icon-inline" /> Copiar
+        </button>
       </div>
       <div className="credential-actions">
-        <button type="button" onClick={onEdit}>Editar</button>
-        <button type="button" className="danger" onClick={onDelete}>Borrar</button>
+        <button type="button" onClick={onEdit}>
+          <FiEdit2 className="icon-inline" /> Editar
+        </button>
+        <button type="button" className="danger" onClick={onDelete}>
+          <FiTrash2 className="icon-inline" /> Borrar
+        </button>
       </div>
     </li>
   );
