@@ -132,6 +132,15 @@ label {
   text-align: center;
 }
 
+/* En mobile es invisible (mismo fondo, sin borde, ocupa toda la altura).
+   A partir de los 768px se convierte en una card centrada -- ver media query. */
+.auth-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .auth-content {
   flex: 1;
   display: flex;
@@ -787,5 +796,36 @@ button.primary:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+/* --- Desktop / pantallas grandes (≥768px) ---
+   El login vuelve a ser una card centrada con borde (en vez de ocupar toda
+   la pantalla como en mobile), y el listado de credenciales pasa de una
+   columna a una grilla que se acomoda sola según el ancho disponible. */
+@media (min-width: 768px) {
+  .auth-screen {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .auth-panel {
+    flex: none;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  .auth-content {
+    flex: none;
+  }
+
+  .credential-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: start;
   }
 }
