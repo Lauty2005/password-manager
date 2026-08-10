@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
+import PasswordStrengthMeter from './PasswordStrengthMeter';
 
 export default function CredentialForm({ initialData, onSave, onCancel }) {
   const [site, setSite] = useState(initialData?.site || '');
@@ -71,6 +72,7 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
             {showPassword ? 'Ocultar' : 'Ver'}
           </button>
         </div>
+        <PasswordStrengthMeter password={password} />
       </label>
 
       <div className="generator-row">
