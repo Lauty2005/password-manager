@@ -1,19 +1,31 @@
 import { useState } from 'react';
 import { generatePassword } from '../lib/crypto';
+import PasswordStrengthMeter from './PasswordStrengthMeter';
 
-export default function CredentialForm({ initialData, onSave, onCancel }) {
+export default function CredentialForm({ initialData, onSave, onCancel, existingFolders = [] }) {
   const [site, setSite] = useState(initialData?.site || '');
   const [username, setUsername] = useState(initialData?.username || '');
   const [password, setPassword] = useState(initialData?.password || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
+  const [folder, setFolder] = useState(initialData?.folder || '');
   const [tagsInput, setTagsInput] = useState((initialData?.tags || []).join(', '));
   const [showPassword, setShowPassword] = useState(false);
   const [genLength, setGenLength] = useState(20);
+  const [genOptions, setGenOptions] = useState({ lower: true, upper: true, numbers: true, symbols: true });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const toggleGenOption = (key) => {
+    setGenOptions((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const handleGenerate = () => {
-    setPassword(generatePassword(genLength));
+    if (!Object.values(genOptions).some(Boolean)) {
+      setError('Elegí al menos un tipo de carácter para generar la contraseña');
+      return;
+    }
+    setError('');
+    setPassword(generatePassword(genLength, genOptions));
     setShowPassword(true);
   };
 
@@ -36,7 +48,7 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
     setError('');
     setSaving(true);
     try {
-      await onSave({ site, username, password, notes, tags: parseTags(tagsInput) });
+      await onSave({ site, username, password, notes, folder: folder.trim(), tags: parseTags(tagsInput) });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -71,7 +83,27 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
             {showPassword ? 'Ocultar' : 'Ver'}
           </button>
         </div>
+        <PasswordStrengthMeter password={password} />
       </label>
+
+      <div className="generator-options-row">
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.upper} onChange={() => toggleGenOption('upper')} />
+          Mayúsculas (A-Z)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.lower} onChange={() => toggleGenOption('lower')} />
+          Minúsculas (a-z)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.numbers} onChange={() => toggleGenOption('numbers')} />
+          Números (0-9)
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={genOptions.symbols} onChange={() => toggleGenOption('symbols')} />
+          Símbolos (!@#$...)
+        </label>
+      </div>
 
       <div className="generator-row">
         <input
@@ -83,6 +115,21 @@ export default function CredentialForm({ initialData, onSave, onCancel }) {
         />
         <button type="button" onClick={handleGenerate}>Generar contraseña segura</button>
       </div>
+
+      <label>
+        Carpeta (opcional)
+        <input
+          value={folder}
+          onChange={(e) => setFolder(e.target.value)}
+          placeholder="Trabajo, Personal, Banco..."
+          list="folder-options"
+        />
+        <datalist id="folder-options">
+          {existingFolders.map((f) => (
+            <option key={f} value={f} />
+          ))}
+        </datalist>
+      </label>
 
       <label>
         Tags (separados por coma, opcional)

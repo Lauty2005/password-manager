@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState(null);
+  const [activeFolder, setActiveFolder] = useState(null); // null = todas, '' = sin carpeta
   const [editing, setEditing] = useState(null); // null | 'new' | credencial
   const [revealedId, setRevealedId] = useState(null);
 
@@ -24,9 +25,17 @@ export default function Dashboard() {
         raw.map(async (item) => {
           try {
             const data = await decryptData(encryptionKey, item.ciphertext, item.iv);
-            return { _id: item._id, tags: [], ...data };
+            return { _id: item._id, tags: [], folder: '', ...data };
           } catch {
-            return { _id: item._id, site: '(no se pudo descifrar)', username: '', password: '', notes: '', tags: [] };
+            return {
+              _id: item._id,
+              site: '(no se pudo descifrar)',
+              username: '',
+              password: '',
+              notes: '',
+              tags: [],
+              folder: ''
+            };
           }
         })
       );
@@ -63,18 +72,29 @@ export default function Dashboard() {
     a.localeCompare(b)
   );
 
+  const allFolders = [...new Set(credentials.map((c) => c.folder).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const hasUnfiledCredential = credentials.some((c) => !c.folder);
+
   const filtered = credentials.filter((c) => {
     const term = search.toLowerCase();
     const matchesSearch =
       !term ||
       c.site.toLowerCase().includes(term) ||
       c.username.toLowerCase().includes(term) ||
+      (c.folder || '').toLowerCase().includes(term) ||
       (c.tags || []).some((tag) => tag.toLowerCase().includes(term));
 
     const matchesTag =
       !activeTag || (c.tags || []).some((tag) => tag.toLowerCase() === activeTag.toLowerCase());
 
-    return matchesSearch && matchesTag;
+    // activeFolder === null -> todas; '' -> solo sin carpeta; string -> esa carpeta puntual
+    const matchesFolder =
+      activeFolder === null ||
+      (activeFolder === '' ? !c.folder : c.folder?.toLowerCase() === activeFolder.toLowerCase());
+
+    return matchesSearch && matchesTag && matchesFolder;
   });
 
   return (
@@ -96,6 +116,37 @@ export default function Dashboard() {
         />
         <button type="button" onClick={() => setEditing('new')}>+ Nueva credencial</button>
       </div>
+
+      {allFolders.length > 0 && (
+        <div className="tag-filter-row folder-filter-row">
+          <button
+            type="button"
+            className={activeFolder === null ? 'tag-chip tag-chip-active' : 'tag-chip'}
+            onClick={() => setActiveFolder(null)}
+          >
+            📁 Todas
+          </button>
+          {allFolders.map((folder) => (
+            <button
+              key={folder}
+              type="button"
+              className={activeFolder === folder ? 'tag-chip tag-chip-active' : 'tag-chip'}
+              onClick={() => setActiveFolder(activeFolder === folder ? null : folder)}
+            >
+              📁 {folder}
+            </button>
+          ))}
+          {hasUnfiledCredential && (
+            <button
+              type="button"
+              className={activeFolder === '' ? 'tag-chip tag-chip-active' : 'tag-chip'}
+              onClick={() => setActiveFolder(activeFolder === '' ? null : '')}
+            >
+              Sin carpeta
+            </button>
+          )}
+        </div>
+      )}
 
       {allTags.length > 0 && (
         <div className="tag-filter-row">
@@ -144,6 +195,7 @@ export default function Dashboard() {
             initialData={editing === 'new' ? null : editing}
             onSave={handleSave}
             onCancel={() => setEditing(null)}
+            existingFolders={allFolders}
           />
         </div>
       )}

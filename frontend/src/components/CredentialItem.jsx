@@ -10,6 +10,7 @@ export default function CredentialItem({ credential, revealed, onToggleReveal, o
   return (
     <li className="credential-item">
       <div className="credential-main">
+        {credential.folder && <span className="credential-folder">📁 {credential.folder}</span>}
         <strong>{credential.site}</strong>
         <span>{credential.username}</span>
         {credential.tags && credential.tags.length > 0 && (
