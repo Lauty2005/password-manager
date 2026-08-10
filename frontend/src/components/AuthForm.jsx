@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function AuthForm() {
-  const { login, register } = useAuth();
+  const { login, register, sessionMessage } = useAuth();
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [email, setEmail] = useState('');
   const [masterPassword, setMasterPassword] = useState('');
@@ -49,6 +49,8 @@ export default function AuthForm() {
       <p className="auth-subtitle">
         {mode === 'login' ? 'Iniciá sesión con tu master password' : 'Creá tu cuenta'}
       </p>
+
+      {sessionMessage && <p className="auth-info">{sessionMessage}</p>}
 
       <form onSubmit={handleSubmit}>
         <label>

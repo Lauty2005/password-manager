@@ -1,8 +1,14 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { api } from '../lib/api';
 import { generateSalt, deriveAuthKeyHex, deriveEncryptionKey } from '../lib/crypto';
 
 const AuthContext = createContext(null);
+
+// Después de esto de inactividad, se cierra la sesión y se borra la
+// encryptionKey de memoria. Es la mitigación obvia para "dejé la compu
+// desbloqueada con el gestor de contraseñas abierto".
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
+const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
 
 export function AuthProvider({ children }) {
   // token y encryptionKey viven SOLO en memoria (estado de React).
@@ -11,6 +17,10 @@ export function AuthProvider({ children }) {
   const [email, setEmail] = useState(null);
   const [token, setToken] = useState(null);
   const [encryptionKey, setEncryptionKey] = useState(null);
+  const [sessionMessage, setSessionMessage] = useState('');
+  const lastActivityRef = useRef(Date.now());
+
+  const isAuthenticated = Boolean(token && encryptionKey);
 
   const register = useCallback(async (emailInput, masterPassword) => {
     const authSalt = generateSalt();
@@ -27,17 +37,56 @@ export function AuthProvider({ children }) {
     setEmail(emailInput);
     setToken(newToken);
     setEncryptionKey(newEncryptionKey);
+    setSessionMessage('');
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((reason) => {
     setEmail(null);
     setToken(null);
     setEncryptionKey(null);
+    setSessionMessage(
+      reason === 'idle' ? 'Cerramos tu sesión por inactividad. Volvé a ingresar tu master password.' : ''
+    );
   }, []);
 
+  // Timer de inactividad: solo corre mientras hay una sesión activa.
+  // Se fija en actividad real del usuario (mouse/teclado/scroll/touch),
+  // no en llamadas de red, para no extender la sesión solo porque
+  // la app está pidiendo datos en segundo plano.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+
+    lastActivityRef.current = Date.now();
+    const registerActivity = () => {
+      lastActivityRef.current = Date.now();
+    };
+
+    ACTIVITY_EVENTS.forEach((eventName) => window.addEventListener(eventName, registerActivity));
+
+    const interval = setInterval(() => {
+      if (Date.now() - lastActivityRef.current > IDLE_TIMEOUT_MS) {
+        logout('idle');
+      }
+    }, 10000);
+
+    return () => {
+      ACTIVITY_EVENTS.forEach((eventName) => window.removeEventListener(eventName, registerActivity));
+      clearInterval(interval);
+    };
+  }, [isAuthenticated, logout]);
+
   const value = useMemo(
-    () => ({ email, token, encryptionKey, isAuthenticated: Boolean(token && encryptionKey), register, login, logout }),
-    [email, token, encryptionKey, register, login, logout]
+    () => ({
+      email,
+      token,
+      encryptionKey,
+      isAuthenticated,
+      sessionMessage,
+      register,
+      login,
+      logout
+    }),
+    [email, token, encryptionKey, isAuthenticated, sessionMessage, register, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

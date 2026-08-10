@@ -83,7 +83,7 @@ export default function Dashboard() {
         <h1>🔐 Mis contraseñas</h1>
         <div className="dashboard-header-right">
           <span className="user-email">{email}</span>
-          <button type="button" className="secondary" onClick={logout}>Cerrar sesión</button>
+          <button type="button" className="secondary" onClick={() => logout()}>Cerrar sesión</button>
         </div>
       </header>
 
