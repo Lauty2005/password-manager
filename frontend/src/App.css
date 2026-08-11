@@ -806,6 +806,34 @@ button.primary:hover {
   }
 }
 
+/* --- Responsive: header/toolbar compactos (<=768px) ---
+   "Cerrar sesión", "Papelera" y "Nueva credencial" quedan solo con su
+   ícono (con title para accesibilidad) para no competir por espacio en
+   pantallas chicas/medianas. El toggle de tema deja de ocupar lugar en el
+   header y pasa a ser un botón flotante fijo abajo a la derecha. */
+@media (max-width: 768px) {
+  .icon-only-md .btn-label {
+    display: none;
+  }
+
+  .icon-only-md {
+    padding: 8px 10px;
+  }
+
+  .dashboard-header-right .theme-toggle {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 8;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+}
+
 /* --- Responsive: pantallas muy angostas (celulares) ---
    El texto de las acciones secundarias del header/toolbar se esconde y
    quedan como botones solo-ícono (con title para accesibilidad), así entran

@@ -214,7 +214,12 @@ export default function Dashboard() {
             <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
               <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
             </button>
-            <button type="button" className="secondary" onClick={() => logout()}>
+            <button
+              type="button"
+              className="secondary icon-only-md"
+              onClick={() => logout()}
+              title="Cerrar sesión"
+            >
               <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
             </button>
           </div>
@@ -250,11 +255,21 @@ export default function Dashboard() {
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          <button type="button" className="secondary" onClick={() => setShowTrash(true)}>
+          <button
+            type="button"
+            className="secondary icon-only-md"
+            onClick={() => setShowTrash(true)}
+            title="Papelera"
+          >
             <FiTrash2 className="icon-inline" /> <span className="btn-label">Papelera</span>
           </button>
-          <button type="button" className="primary" onClick={() => setEditing('new')}>
-            <FiPlus className="icon-inline" /> Nueva credencial
+          <button
+            type="button"
+            className="primary icon-only-md"
+            onClick={() => setEditing('new')}
+            title="Nueva credencial"
+          >
+            <FiPlus className="icon-inline" /> <span className="btn-label">Nueva credencial</span>
           </button>
         </div>
       )}
