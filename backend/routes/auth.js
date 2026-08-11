@@ -9,6 +9,12 @@ const router = express.Router();
 
 // Registro: el cliente ya generó authSalt y derivó authKey localmente a partir
 // de la master password. Acá solo guardamos bcrypt(authKey) + el salt.
+//
+// Si el email ya existe, NO lo decimos: devolvemos la misma respuesta (201,
+// mismo mensaje) que en un alta real, y hacemos igual el bcrypt.hash aunque
+// no se use, para que el tiempo de respuesta tampoco lo delate. Misma idea
+// que el salt falso de /salt/:email -- que un atacante no pueda usar este
+// endpoint como oráculo para saber si un email tiene cuenta acá.
 router.post('/register', async (req, res) => {
   try {
     const { email, authSalt, authKey } = req.body;
@@ -17,15 +23,18 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos' });
     }
 
-    const existing = await User.findOne({ email: email.toLowerCase() });
-    if (existing) {
-      return res.status(409).json({ error: 'Ese email ya está registrado' });
+    const normalizedEmail = email.toLowerCase();
+    const existing = await User.findOne({ email: normalizedEmail });
+    const authHash = await bcrypt.hash(authKey, 10);
+
+    if (!existing) {
+      await User.create({ email: normalizedEmail, authSalt, authHash });
     }
 
-    const authHash = await bcrypt.hash(authKey, 10);
-    const user = await User.create({ email: email.toLowerCase(), authSalt, authHash });
-
-    res.status(201).json({ message: 'Usuario creado', email: user.email });
+    res.status(201).json({
+      message: 'Si los datos son válidos, ya podés iniciar sesión.',
+      email: normalizedEmail
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });

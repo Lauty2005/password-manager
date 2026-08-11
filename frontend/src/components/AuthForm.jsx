@@ -34,7 +34,7 @@ export default function AuthForm() {
       if (mode === 'register') {
         await register(email, masterPassword);
         setMode('login');
-        setInfo('Cuenta creada. Ahora iniciá sesión.');
+        setInfo('Si los datos son válidos, ya podés iniciar sesión.');
         setMasterPassword('');
         setConfirmPassword('');
       } else {
