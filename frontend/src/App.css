@@ -26,6 +26,17 @@
   border: 1px solid var(--border);
 }
 
+/* Avatar del usuario en el header: mismo look que el de las credenciales
+   (iniciales + color generados a partir de un texto, acá el email), pero
+   con tamaño fijo y cursor default ya que no es clickeable -- el email
+   completo aparece como tooltip nativo al pasar el mouse. */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+  cursor: default;
+}
+
 .site-preview-row {
   display: flex;
   align-items: center;
@@ -848,13 +859,6 @@ button.primary:hover {
   .dashboard-header-right button,
   .dashboard-toolbar button {
     padding: 8px 10px;
-  }
-
-  .user-email {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 

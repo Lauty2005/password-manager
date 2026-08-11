@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
 import { encryptData, decryptData } from '../lib/crypto';
+import { getAvatarColor, getAvatarInitial } from '../lib/avatar';
 import CredentialForm from './CredentialForm';
 import CredentialItem from './CredentialItem';
 import ThemeToggle from './ThemeToggle';
@@ -209,7 +210,13 @@ export default function Dashboard() {
         <header className="dashboard-header">
           <h1><FiLock className="icon-inline" /> Mis contraseñas</h1>
           <div className="dashboard-header-right">
-            <span className="user-email">{email}</span>
+            <div
+              className="site-avatar user-avatar"
+              style={{ background: getAvatarColor(email) }}
+              title={email}
+            >
+              {getAvatarInitial(email)}
+            </div>
             <ThemeToggle />
             <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
               <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
