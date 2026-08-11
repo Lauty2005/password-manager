@@ -210,6 +210,23 @@ export default function Dashboard() {
         <header className="dashboard-header">
           <h1><FiLock className="icon-inline" /> Mis contraseñas</h1>
           <div className="dashboard-header-right">
+            <ThemeToggle />
+            <button
+              type="button"
+              className="secondary btn-collapsible"
+              onClick={() => setShowChangePassword(true)}
+              title="Contraseña maestra"
+            >
+              <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
+            </button>
+            <button
+              type="button"
+              className="secondary btn-collapsible"
+              onClick={() => logout()}
+              title="Cerrar sesión"
+            >
+              <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
+            </button>
             <div
               className="site-avatar user-avatar"
               style={{ background: getAvatarColor(email) }}
@@ -217,18 +234,6 @@ export default function Dashboard() {
             >
               {getAvatarInitial(email)}
             </div>
-            <ThemeToggle />
-            <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
-              <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
-            </button>
-            <button
-              type="button"
-              className="secondary icon-only-md"
-              onClick={() => logout()}
-              title="Cerrar sesión"
-            >
-              <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
-            </button>
           </div>
         </header>
       </nav>

@@ -350,6 +350,39 @@ button.primary:hover {
   margin: 0;
 }
 
+/* Botones "colapsables": quedan solo con su ícono en cualquier
+   resolución (mismo tamaño que un botón icon-only) y despliegan su
+   texto con una animación al pasar el mouse o enfocarlos con el
+   teclado. gap:0 porque el ancho del label se anima directamente
+   (max-width + margin), no queremos el gap fijo del botón sumándose
+   aparte. */
+.btn-collapsible {
+  gap: 0;
+  padding: 8px 10px;
+}
+
+.btn-collapsible .btn-label {
+  display: inline-block;
+  max-width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease;
+}
+
+.btn-collapsible:hover,
+.btn-collapsible:focus-visible {
+  padding: 8px 14px;
+}
+
+.btn-collapsible:hover .btn-label,
+.btn-collapsible:focus-visible .btn-label {
+  max-width: 200px;
+  margin-left: 6px;
+  opacity: 1;
+}
+
 .auth-theme-toggle {
   display: flex;
   justify-content: flex-end;
