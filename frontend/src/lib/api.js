@@ -44,6 +44,12 @@ export const api = {
       body: JSON.stringify({ oldAuthKey, newAuthKey })
     }),
 
+  logoutAllSessions: (token) =>
+    request('/auth/logout-all', {
+      method: 'POST',
+      headers: authHeaders(token)
+    }),
+
   listCredentials: (token, { trash = false } = {}) =>
     request(`/credentials${trash ? '?trash=1' : ''}`, { headers: authHeaders(token) }),
 

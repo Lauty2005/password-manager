@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FiKey, FiAlertTriangle } from 'react-icons/fi';
+import { FiKey, FiAlertTriangle, FiLogOut } from 'react-icons/fi';
 
 const PROGRESS_LABELS = {
   reencrypting: 'Recifrando tus credenciales...',
@@ -8,13 +8,31 @@ const PROGRESS_LABELS = {
 };
 
 export default function ChangeMasterPasswordModal({ onClose }) {
-  const { changeMasterPassword } = useAuth();
+  const { changeMasterPassword, logoutAllSessions } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const [confirmingLogoutAll, setConfirmingLogoutAll] = useState(false);
+  const [loggingOutAll, setLoggingOutAll] = useState(false);
+  const [logoutAllError, setLogoutAllError] = useState('');
+
+  const handleLogoutAll = async () => {
+    setLogoutAllError('');
+    setLoggingOutAll(true);
+    try {
+      await logoutAllSessions();
+      // Si termina bien, logoutAllSessions ya cerro la sesion local tambien
+      // (el token de este dispositivo queda invalidado igual que el resto).
+    } catch (err) {
+      setLogoutAllError(err.message);
+      setLoggingOutAll(false);
+      setConfirmingLogoutAll(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,6 +118,38 @@ export default function ChangeMasterPasswordModal({ onClose }) {
             {saving ? 'Un momento...' : 'Cambiar contraseña'}
           </button>
         </div>
+
+        <hr className="form-divider" />
+
+        <p className="form-section-hint">
+          ¿Perdiste un dispositivo o sospechás que alguien más tiene acceso a tu sesión?
+        </p>
+
+        {logoutAllError && <p className="auth-error">{logoutAllError}</p>}
+
+        {confirmingLogoutAll ? (
+          <div className="form-actions">
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => setConfirmingLogoutAll(false)}
+              disabled={loggingOutAll}
+            >
+              Cancelar
+            </button>
+            <button type="button" className="danger" onClick={handleLogoutAll} disabled={loggingOutAll}>
+              {loggingOutAll ? 'Cerrando...' : 'Sí, cerrar todas'}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="secondary btn-full-width"
+            onClick={() => setConfirmingLogoutAll(true)}
+          >
+            <FiLogOut className="icon-inline" /> Cerrar sesión en todos los dispositivos
+          </button>
+        )}
       </form>
     </div>
   );

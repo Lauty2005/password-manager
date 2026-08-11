@@ -53,6 +53,8 @@ export function AuthProvider({ children }) {
       message = 'Cerramos tu sesión por inactividad. Volvé a ingresar tu master password.';
     } else if (reason === 'password-changed') {
       message = 'Contraseña maestra actualizada. Volvé a iniciar sesión con la nueva.';
+    } else if (reason === 'all-sessions-closed') {
+      message = 'Cerramos la sesión en todos los dispositivos. Volvé a iniciar sesión.';
     }
     setSessionMessage(message);
   }, []);
@@ -64,6 +66,15 @@ export function AuthProvider({ children }) {
     await changeMasterPasswordFlow({ token, authSalt, currentPassword, newPassword, onProgress });
     logout('password-changed');
   }, [token, authSalt, logout]);
+
+  // Invalida todos los JWT emitidos hasta ahora (este dispositivo y
+  // cualquier otro con sesión abierta). Para cuando perdiste un dispositivo
+  // o sospechás que alguien tiene un token tuyo -- no hace falta esperar a
+  // que expire solo (hasta 2hs).
+  const logoutAllSessions = useCallback(async () => {
+    await api.logoutAllSessions(token);
+    logout('all-sessions-closed');
+  }, [token, logout]);
 
   // Timer de inactividad: solo corre mientras hay una sesión activa.
   // Se fija en actividad real del usuario (mouse/teclado/scroll/touch),
@@ -101,9 +112,21 @@ export function AuthProvider({ children }) {
       register,
       login,
       logout,
-      changeMasterPassword
+      changeMasterPassword,
+      logoutAllSessions
     }),
-    [email, token, encryptionKey, isAuthenticated, sessionMessage, register, login, logout, changeMasterPassword]
+    [
+      email,
+      token,
+      encryptionKey,
+      isAuthenticated,
+      sessionMessage,
+      register,
+      login,
+      logout,
+      changeMasterPassword,
+      logoutAllSessions
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

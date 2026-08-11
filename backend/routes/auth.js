@@ -86,7 +86,11 @@ router.post('/login', loginLimiter, async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '2h' });
+    const token = jwt.sign(
+      { userId: user._id, tokenVersion: user.tokenVersion },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
     res.json({ token, email: user.email });
   } catch (err) {
     console.error(err);
@@ -117,9 +121,34 @@ router.put('/master-password', auth, async (req, res) => {
     }
 
     user.authHash = await bcrypt.hash(newAuthKey, 10);
+    // Invalida cualquier JWT emitido antes de este cambio (de este dispositivo
+    // u otro) -- si alguien tenia una sesion abierta con la password vieja,
+    // se corta acá en vez de seguir viva hasta que el token expire solo.
+    user.tokenVersion += 1;
     await user.save();
 
     res.json({ message: 'Contraseña maestra actualizada' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
+// Cierra todas las sesiones activas (todos los dispositivos), sin cambiar la
+// master password. Util si perdiste un dispositivo o sospechás que alguien
+// tiene un token tuyo -- corta el acceso ahi mismo en vez de esperar a que
+// el JWT expire solo (hasta 2hs).
+router.post('/logout-all', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    user.tokenVersion += 1;
+    await user.save();
+
+    res.json({ message: 'Se cerraron todas las sesiones' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });

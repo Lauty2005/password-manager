@@ -783,6 +783,23 @@ button.primary:hover {
   border: none;
 }
 
+.form-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0 12px;
+}
+
+.form-section-hint {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.btn-full-width {
+  width: 100%;
+  justify-content: center;
+}
+
 /* --- Responsive: pantallas chicas --- */
 
 @media (max-width: 640px) {
