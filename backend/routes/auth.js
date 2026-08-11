@@ -4,12 +4,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { loginLimiter, registerLimiter, saltLimiter } = require('../middleware/rateLimit');
 
 const router = express.Router();
 
 // Registro: el cliente ya generó authSalt y derivó authKey localmente a partir
 // de la master password. Acá solo guardamos bcrypt(authKey) + el salt.
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimiter, async (req, res) => {
   try {
     const { email, authSalt, authKey } = req.body;
 
@@ -36,7 +37,7 @@ router.post('/register', async (req, res) => {
 // para hacer login. Si el email no existe, devolvemos un salt falso pero
 // determinístico (HMAC del email con JWT_SECRET) para no revelar por timing
 // ni por forma de respuesta si ese email está registrado o no.
-router.get('/salt/:email', async (req, res) => {
+router.get('/salt/:email', saltLimiter, async (req, res) => {
   try {
     const email = req.params.email.toLowerCase();
     const user = await User.findOne({ email });
@@ -58,7 +59,7 @@ router.get('/salt/:email', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, authKey } = req.body;
 
