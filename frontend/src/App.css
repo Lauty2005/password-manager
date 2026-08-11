@@ -1,8 +1,13 @@
+/* Antes #root tenia un max-width:720px que aplicaba a TODA la app, login
+   incluido. El login se sigue centrando solo (ver .auth-panel/.auth-content),
+   pero el dashboard ahora usa el ancho completo de la pantalla -- el nav y
+   el contenido manejan su propio max-width/padding mas abajo. */
 #root {
   width: 100%;
-  max-width: 720px;
+  max-width: none;
   text-align: left;
-  padding: 24px 20px 60px;
+  padding: 0;
+  border-inline: none;
 }
 
 .site-avatar {
@@ -130,6 +135,7 @@ label {
   display: flex;
   flex-direction: column;
   text-align: center;
+  padding: 24px 20px 40px;
 }
 
 /* En mobile es invisible (mismo fondo, sin borde, ocupa toda la altura).
@@ -250,7 +256,19 @@ button.primary:hover {
   opacity: 0.8;
 }
 
-/* --- Dashboard --- */
+/* --- Dashboard ---
+   .dashboard-nav es la barra full-bleed (fondo + borde de punta a punta y
+   pegada arriba); .dashboard-header es su contenido interno, que sí tiene
+   padding y se limita en ancho en desktop. .dashboard-content envuelve el
+   toolbar y el listado con su propio padding/max-width. */
+
+.dashboard-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
 
 .dashboard-header {
   display: flex;
@@ -258,6 +276,7 @@ button.primary:hover {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  padding: 16px 20px;
 }
 
 .dashboard-header h1 {
@@ -272,12 +291,16 @@ button.primary:hover {
   font-size: 13px;
 }
 
+.dashboard-content {
+  padding: 20px 20px 40px;
+}
+
 .dashboard-toolbar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 20px 0;
+  margin: 0 0 20px;
 }
 
 .search-input-wrap {
@@ -691,7 +714,15 @@ button.primary:hover {
 /* --- Responsive: pantallas chicas --- */
 
 @media (max-width: 640px) {
-  #root {
+  .auth-screen {
+    padding: 16px 12px 40px;
+  }
+
+  .dashboard-header {
+    padding: 16px 12px;
+  }
+
+  .dashboard-content {
     padding: 16px 12px 40px;
   }
 
@@ -827,5 +858,16 @@ button.primary:hover {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     align-items: start;
+  }
+
+  /* La barra de nav y el fondo del contenido siguen de punta a punta, pero
+     su contenido interno se centra y se limita en ancho para que no quede
+     estirado en pantallas muy grandes. */
+  .dashboard-header,
+  .dashboard-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 32px;
+    padding-right: 32px;
   }
 }

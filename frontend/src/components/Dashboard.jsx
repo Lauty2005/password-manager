@@ -205,20 +205,23 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
-        <h1><FiLock className="icon-inline" /> Mis contraseñas</h1>
-        <div className="dashboard-header-right">
-          <span className="user-email">{email}</span>
-          <ThemeToggle />
-          <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
-            <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
-          </button>
-          <button type="button" className="secondary" onClick={() => logout()}>
-            <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
-          </button>
-        </div>
-      </header>
+      <nav className="dashboard-nav">
+        <header className="dashboard-header">
+          <h1><FiLock className="icon-inline" /> Mis contraseñas</h1>
+          <div className="dashboard-header-right">
+            <span className="user-email">{email}</span>
+            <ThemeToggle />
+            <button type="button" className="secondary" onClick={() => setShowChangePassword(true)}>
+              <FiKey className="icon-inline" /> <span className="btn-label">Contraseña maestra</span>
+            </button>
+            <button type="button" className="secondary" onClick={() => logout()}>
+              <FiLogOut className="icon-inline" /> <span className="btn-label">Cerrar sesión</span>
+            </button>
+          </div>
+        </header>
+      </nav>
 
+      <div className="dashboard-content">
       {showTrash ? (
         <div className="dashboard-toolbar">
           <button type="button" className="secondary" onClick={() => setShowTrash(false)}>
@@ -355,6 +358,7 @@ export default function Dashboard() {
           />
         ))}
       </ul>
+      </div>
 
       {editing && (
         <div className="modal-overlay">
