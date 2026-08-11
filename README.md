@@ -42,6 +42,11 @@ npm run dev
 Por defecto el frontend espera el backend en `http://localhost:3001/api`
 (configurable en `frontend/.env`, variable `VITE_API_URL`).
 
+El backend solo acepta requests de navegador desde los orígenes listados en
+`ALLOWED_ORIGINS` (`backend/.env`, separados por coma). Si agregás el
+frontend en un puerto o dominio distinto, sumalo ahí o las requests van a
+fallar por CORS.
+
 ## Estado del proyecto
 
 MVP básico: registro/login con master password, CRUD de credenciales cifradas,
