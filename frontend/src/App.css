@@ -37,16 +37,23 @@
   cursor: default;
 }
 
-.site-preview-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
+/* Input de "Sitio / App" con el avatar generado (color + inicial, o logo
+   de marca si lo reconocemos) como ícono dentro del campo, mismo patrón
+   que .password-input-wrap. */
+.site-input-wrap {
+  position: relative;
 }
 
-.site-preview-input {
-  flex: 1;
-  margin-bottom: 0 !important;
+.site-input-wrap input {
+  padding-right: 44px;
+}
+
+.site-input-wrap .site-avatar {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .credential-site-link {
@@ -667,19 +674,23 @@ button.primary:hover {
   border-radius: 12px;
   padding: 28px;
   width: 100%;
-  max-width: 420px;
+  max-width: 560px;
   text-align: left;
   max-height: 90vh;
   overflow-y: auto;
 }
 
-.password-row {
-  display: flex;
-  gap: 8px;
+.credential-form h2 {
+  font-size: 26px;
 }
 
-.password-row input {
-  flex: 1;
+/* Pares de campos lado a lado (Sitio/URL, Usuario/Contraseña,
+   Carpeta/Tags). Se apilan en una sola columna en mobile, ver media
+   query más abajo. */
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
 }
 
 .strength-meter {
@@ -705,11 +716,30 @@ button.primary:hover {
   font-weight: 600;
 }
 
-.generator-options-row {
+/* Sección del generador: label, fila con la grilla de checkboxes +
+   longitud, y el botón de generar ocupando todo el ancho debajo. */
+.generator-section {
+  margin-bottom: 14px;
+}
+
+.field-group-label {
+  font-size: 14px;
+  margin: 0 0 6px;
+  text-align: left;
+}
+
+.generator-top-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
+  align-items: stretch;
+  gap: 16px;
   margin-bottom: 10px;
+}
+
+.generator-options-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
 }
 
 .checkbox-label {
@@ -727,19 +757,17 @@ button.primary:hover {
   margin: 0;
 }
 
-.generator-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.generator-row input {
-  width: 70px;
+.generator-length-input {
+  width: 64px;
   flex: none;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.generator-row button {
-  flex: 1;
+.generator-generate-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .form-actions {
@@ -833,8 +861,19 @@ button.primary:hover {
     width: 100%;
   }
 
-  .password-row {
-    flex-wrap: wrap;
+  /* Los pares de campos y la fila de checkboxes+longitud del generador
+     se apilan en una sola columna para no quedar apretados. */
+  .form-row-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .generator-top-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .generator-length-input {
+    width: 100%;
   }
 
   .modal-overlay {

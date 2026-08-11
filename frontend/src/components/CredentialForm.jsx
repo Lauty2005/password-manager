@@ -86,101 +86,116 @@ export default function CredentialForm({ initialData, onSave, onCancel, existing
     <form className="credential-form" onSubmit={handleSubmit}>
       <h2>{initialData ? 'Editar' : 'Nueva'} credencial</h2>
 
-      <div className="site-preview-row">
-        <SiteAvatar site={site} size={44} />
-        <label className="site-preview-input">
+      <div className="form-row-2col">
+        <label>
           Sitio / App
-          <input value={site} onChange={(e) => setSite(e.target.value)} placeholder="github.com" required />
+          <div className="site-input-wrap">
+            <input value={site} onChange={(e) => setSite(e.target.value)} placeholder="github.com" required />
+            <SiteAvatar site={site} size={26} />
+          </div>
         </label>
-      </div>
 
-      <label>
-        URL (opcional)
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://github.com/login"
-        />
-      </label>
-
-      <label>
-        Usuario / Email
-        <input value={username} onChange={(e) => setUsername(e.target.value)} required />
-      </label>
-
-      <label>
-        Contraseña
-        <div className="password-row">
+        <label>
+          URL (opcional)
           <input
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://github.com/login"
           />
-          <button type="button" onClick={() => setShowPassword((v) => !v)}>
-            {showPassword ? <FiEyeOff className="icon-inline" /> : <FiEye className="icon-inline" />}
-            {showPassword ? ' Ocultar' : ' Ver'}
-          </button>
-        </div>
-        <PasswordStrengthMeter password={password} />
-      </label>
-
-      <div className="generator-options-row">
-        <label className="checkbox-label">
-          <input type="checkbox" checked={genOptions.upper} onChange={() => toggleGenOption('upper')} />
-          Mayúsculas (A-Z)
-        </label>
-        <label className="checkbox-label">
-          <input type="checkbox" checked={genOptions.lower} onChange={() => toggleGenOption('lower')} />
-          Minúsculas (a-z)
-        </label>
-        <label className="checkbox-label">
-          <input type="checkbox" checked={genOptions.numbers} onChange={() => toggleGenOption('numbers')} />
-          Números (0-9)
-        </label>
-        <label className="checkbox-label">
-          <input type="checkbox" checked={genOptions.symbols} onChange={() => toggleGenOption('symbols')} />
-          Símbolos (!@#$...)
         </label>
       </div>
 
-      <div className="generator-row">
-        <input
-          type="number"
-          min={8}
-          max={64}
-          value={genLength}
-          onChange={(e) => setGenLength(Number(e.target.value))}
-        />
-        <button type="button" onClick={handleGenerate}>
+      <div className="form-row-2col">
+        <label>
+          Usuario / Email
+          <input value={username} onChange={(e) => setUsername(e.target.value)} required />
+        </label>
+
+        <label>
+          Contraseña
+          <div className="password-input-wrap">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-icon"
+              onClick={() => setShowPassword((v) => !v)}
+              title={showPassword ? 'Ocultar' : 'Mostrar'}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
+          </div>
+          <PasswordStrengthMeter password={password} />
+        </label>
+      </div>
+
+      <div className="generator-section">
+        <p className="field-group-label">Generador de contraseña segura</p>
+        <div className="generator-top-row">
+          <div className="generator-options-grid">
+            <label className="checkbox-label">
+              <input type="checkbox" checked={genOptions.upper} onChange={() => toggleGenOption('upper')} />
+              Mayúsculas (A-Z)
+            </label>
+            <label className="checkbox-label">
+              <input type="checkbox" checked={genOptions.lower} onChange={() => toggleGenOption('lower')} />
+              Minúsculas (a-z)
+            </label>
+            <label className="checkbox-label">
+              <input type="checkbox" checked={genOptions.numbers} onChange={() => toggleGenOption('numbers')} />
+              Números (0-9)
+            </label>
+            <label className="checkbox-label">
+              <input type="checkbox" checked={genOptions.symbols} onChange={() => toggleGenOption('symbols')} />
+              Símbolos (!@#$...)
+            </label>
+          </div>
+          <input
+            type="number"
+            min={8}
+            max={64}
+            value={genLength}
+            onChange={(e) => setGenLength(Number(e.target.value))}
+            className="generator-length-input"
+            aria-label="Longitud de la contraseña generada"
+            title="Longitud"
+          />
+        </div>
+        <button type="button" className="primary generator-generate-btn" onClick={handleGenerate}>
           <FiRefreshCw className="icon-inline" /> Generar contraseña segura
         </button>
       </div>
 
-      <label>
-        Carpeta (opcional)
-        <input
-          value={folder}
-          onChange={(e) => setFolder(e.target.value)}
-          placeholder="Trabajo, Personal, Banco..."
-          list="folder-options"
-        />
-        <datalist id="folder-options">
-          {existingFolders.map((f) => (
-            <option key={f} value={f} />
-          ))}
-        </datalist>
-      </label>
+      <div className="form-row-2col">
+        <label>
+          Carpeta (opcional)
+          <input
+            value={folder}
+            onChange={(e) => setFolder(e.target.value)}
+            placeholder="Trabajo, Personal, Banco..."
+            list="folder-options"
+          />
+          <datalist id="folder-options">
+            {existingFolders.map((f) => (
+              <option key={f} value={f} />
+            ))}
+          </datalist>
+        </label>
 
-      <label>
-        Tags (separados por coma, opcional)
-        <input
-          value={tagsInput}
-          onChange={(e) => setTagsInput(e.target.value)}
-          placeholder="trabajo, banco, redes"
-        />
-      </label>
+        <label>
+          Tags (separados por coma, opcional)
+          <input
+            value={tagsInput}
+            onChange={(e) => setTagsInput(e.target.value)}
+            placeholder="trabajo, banco, redes"
+          />
+        </label>
+      </div>
 
       <label>
         Notas (opcional)
