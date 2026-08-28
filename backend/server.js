@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const credentialRoutes = require('./routes/credentials');
+const tokenRoutes = require('./routes/tokens');
 
 const app = express();
 
@@ -37,6 +38,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/credentials', credentialRoutes);
+app.use('/api/tokens', tokenRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Servidor corriendo en puerto ${process.env.PORT}`);

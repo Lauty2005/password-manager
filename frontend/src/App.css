@@ -313,6 +313,25 @@ button.primary:hover {
   padding: 20px 20px 40px;
 }
 
+/* Switch entre secciones (Contraseñas / Tokens). Mismo tipo de control que
+   los tag-chip de filtro pero un poco mas grande, ya que acá elige toda la
+   vista en vez de filtrar dentro de una lista. */
+.view-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.view-tab {
+  font-weight: 600;
+}
+
+.view-tab-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 .dashboard-toolbar {
   display: flex;
   align-items: center;
@@ -540,6 +559,25 @@ button.primary:hover {
   gap: 4px;
   font-size: 11px;
   color: var(--color-alert);
+  margin-top: 2px;
+}
+
+/* Badges de vencimiento de tokens, mismo estilo que .reused-badge. */
+.expiry-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-alert);
+  margin-top: 2px;
+}
+
+.expiry-expired {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-danger);
   margin-top: 2px;
 }
 

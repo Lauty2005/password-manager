@@ -96,5 +96,54 @@ export const api = {
     request(`/credentials/${id}/permanent`, {
       method: 'DELETE',
       headers: authHeaders(token)
+    }),
+
+  // Mismo patron que los de credenciales, sobre /api/tokens.
+  listTokens: (token, { trash = false } = {}) =>
+    request(`/tokens${trash ? '?trash=1' : ''}`, { headers: authHeaders(token) }),
+
+  createToken: (token, ciphertext, iv) =>
+    request('/tokens', {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify({ ciphertext, iv })
+    }),
+
+  updateToken: (token, id, ciphertext, iv) =>
+    request(`/tokens/${id}`, {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify({ ciphertext, iv })
+    }),
+
+  setTokenFavorite: (token, id, isFavorite) =>
+    request(`/tokens/${id}/favorite`, {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: JSON.stringify({ isFavorite })
+    }),
+
+  touchToken: (token, id) =>
+    request(`/tokens/${id}/touch`, {
+      method: 'POST',
+      headers: authHeaders(token)
+    }),
+
+  deleteToken: (token, id) =>
+    request(`/tokens/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(token)
+    }),
+
+  restoreToken: (token, id) =>
+    request(`/tokens/${id}/restore`, {
+      method: 'POST',
+      headers: authHeaders(token)
+    }),
+
+  permanentDeleteToken: (token, id) =>
+    request(`/tokens/${id}/permanent`, {
+      method: 'DELETE',
+      headers: authHeaders(token)
     })
 };
