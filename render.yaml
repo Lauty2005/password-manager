@@ -1,0 +1,22 @@
+# Blueprint de Render para el backend. Con esto en la raíz del repo, Render
+# puede crear el servicio automáticamente al conectar el repo (New -> Blueprint).
+#
+# Los valores con "sync: false" NO se commitean a git -- Render los pide una
+# sola vez al crear el servicio (o los cargás después a mano en el dashboard,
+# Environment). Ver README para el detalle de cada uno.
+services:
+  - type: web
+    name: password-manager-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
